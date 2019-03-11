@@ -19,38 +19,70 @@ etf4<-read.table("ETF4_2000_2018_d_ansi.txt", header = T, stringsAsFactors = T,
                  colClasses = c("證券代碼"="character"))
 str(etf4)
 head(etf4)
+```
+#讀取文字檔用read.table
+rm=remove
+
+ls()=是設定為空的
+
+rm(list=ls())=可以把所有的資料清除
+
+txt.=文字檔  (read.table.)
+
+header=T 是要有表投的意思
+
+stringsAsFactors 字串變成文字分類
+
+str=structure
+
+```{r}
 etf4<-read.csv("ETF4_2000_2018_d.csv", colClasses = c("證券代碼"="character"))
 str(etf4)
 etf4.csv<-read.csv("ETF4_2000_2018_d.csv", fileEncoding='big5', 
                    colClasses=c('factor', 'factor', 'factor', 'numeric', 'numeric'))
 head(etf4.csv)
 str(etf4.csv)
-```
-#rm=remove
-#ls()=是設定為空的
-#rm(list=ls())=可以把所有的資料清除
-#txt.=文字檔  (read.table.)
-#header=是要有表投的意思
-#head/tail 是看前/後幾筆資料
-#str=structure
-#int=整數
-#stringsAsFactors 使字串變成文字分類
-#colclasses=c 欄位的屬性
-#col=列
-#c(欄,列)的c代表連結
-#colnames=欄位名稱
-#fileEncoding='big5'(有亂碼時改編碼方式)
 
-```{r}
 library(readr)
 etf4_csv<-read_csv("ETF4_2000_2018_d.csv")
 etf4_csv<-read_csv("ETF4_2000_2018_d.csv", locale = locale(encoding='big5'))
 head(etf4_csv)
 str(etf4_csv)
+```
+#讀取csv檔用read.csv
+head/tail 是看前/後幾筆資料
+
+str=structure
+
+int=整數
+
+colclasses=c 欄位的屬性
+
+col=列
+
+factor(因子)
+
+numeric(數值)
+
+character(文字)
+
+fileEncoding='big5'(有亂碼時改編碼方式)
+
+#csv檔用readr(要先安裝程式)
+library(readr) 執行才可跑程式
+
+locale 是區域設定
+
+encoding(編碼)
+
+etf4_csv<-read_csv("ETF4_2000_2018_d.csv", locale = locale(encoding='big5')) (會有tibble)
+
+```{r}
 library(readxl)
 etf4_xls<-read_excel("ETF4_2000_2018_d.xls", 
                      col_types =c("text", "text","text", "numeric","numeric"))
 head(etf4_xls)
+
 etf4.c<-etf4_csv[, c(-2, -4)]
 etf4.c<-etf4.c[-1,]
 colnames(etf4.c)<-c("id", "date", "price")
@@ -59,12 +91,29 @@ library(dplyr)
 etf4.c<-etf4_csv%>%select(c(1,3,5))%>%rename("id" = "證券代碼", "date"= "日期", "price" = "當日均價(元)")
 etf4.c
 ```
-#csv檔用readr(要先安裝程式)
-#library(readr) 執行
-#etf4_xls<-read_excel("ETF4_2000_2018_d.xls", col_types =c("text", "text","text", "numeric","numeric")) 結果會是date.frame 的形式
-#library(readxl) 執行
-#etf4.c$ (看哪一個欄位)
-#library(readxl) 執行
+#讀取excel用read_excel
+etf4_xls<-read_excel("ETF4_2000_2018_d.xls", col_types =c("text", "text","text", "numeric","numeric")) 結果會是date.frame 的形式
+
+library(readxl) 執行才可跑程式
+
+col_types(列的形式)
+
+#整理資料可以用etf4.c<-etf4_csv[, c(欄, 列)]
+etf4.c$ (看哪一個欄位)
+
+c(欄,列)的c代表連結
+
+colnames=欄位名稱
+
+pipe operator (簡化成是不必要程式)
+
+library(magrittr)、library(dplyr)執行才可跑程式
+
+etf4_135 = etf4_csv[,(1,3,5)] (看1、3、5欄的資料)
+
+%>% (可省略打變數名稱的時間)
+
+id" = 證券代碼、date= 日期、price" = 當日均價(元)
 
 ```{r}
 library(reshape2)
@@ -72,10 +121,22 @@ etf4.reorder = dcast(etf4.c, date~id)
 dim(etf4.reorder)
 head(etf4.reorder)
 str(etf4.reorder)
+
 etf4.reorder$date<-as.Date(as.character(etf4.reorder$date), "%Y%m%d") 
 head(etf4.reorder)
 str(etf4.reorder)
 ```
+#使用dcast按日期重新排序數據
+library(reshape2) 執行才可跑程式
+
+reorder 為重新整理的意思
+
+etf4.reorder = dcast(etf4.c, date~id) -用日期做一個欄位的分類，做資料重整
+
+#as.Date -把日期數字資料做轉換後的變數 (要先轉換成文字)
+etf4.reorder$date<-as.Date(as.character(etf4.reorder$date), "%Y%m%d"- 把文字轉成數字再轉成日期
+
+%Y大寫為4個數字(2009)、小寫為2個數字(09)
 
 ```{r}
 library(xts)
@@ -83,22 +144,73 @@ etf4.xts<-xts(etf4.reorder[,-1], order.by = etf4.reorder$date)
 head(etf4.xts)
 tail(etf4.xts)
 str(etf4.xts)
-```
 
+etf4.xts<-na.locf(etf4.xts)                
+tail(etf4.xts)
+etf4.xts.fill<-na.locf(etf4.xts, fromLast = TRUE) 
+head(etf4.xts.fill)
+etf4.xts<-na.omit(etf4.xts)
+head(etf4.xts)
+```
+#轉變成處理時間序列的資料
+xts是處理時間序列的資料
+
+#處理數據中的缺失
+head/tail 是看前/後幾筆資料
+na.locf中locf=last obs. carried forward   (用現有的資料補齊沒有的資料)
+
+last obs. carried forward   (用未來的資料補前面沒有的資料)
+
+na.omit中omit代表省略的意思
+
+etf4.xts<-na.omit(etf4.xts)-刪除沒有值得部分
 
 ```{r}
+library(tidyr)
+etf4.xts1<-etf4.xts[complete.cases(etf4.xts),]
+head(etf4.xts1)
 
+lag_x <- lag(etf4.xts$`0050`, 1)
+head(lag_x)
 ```
+#整理資料的套件tidyr
+complete.cases為完整的資料
 
+[lag operator(落後運算元)]
 
+```{r}
+write.csv(etf4.xts, file = "myetf4.csv")
+write.zoo(etf4.xts, sep = ',', file = "myetf4.csv.1")
+saveRDS(etf4.xts, file = "etf4.xts.rds")
+etf4.xts2 <- readRDS("etf4.xts.rds")
+head(etf4.xts2)
+etf4.zoo <- read.zoo("myetf4.csv.1", header = TRUE, index.column =1, 
+                     sep = ",", format = "%Y-%m-%d")
+head(etf4.zoo)
+class(etf4.zoo)
+etf4.xts3<-as.xts(etf4.zoo)
+head(etf4.xts3)
 
+etf4_2016<-etf4.xts['2016']
+etf4_2016_01_06 <- etf4.xts["20160101/20160630"]
+head(etf4_2016_01_06)
+lastweek <- last(etf4_2016, "1 week")
+last(lastweek, 2)
+first(lastweek, "-2 days")
+```
+#數據輸出
+輸出csv檔可使用write.csv函數
 
+write.zoo 可保存時間序列
 
+日期索引消失必須使用write.zoo來保存xts文件
 
+saveRDS 可把大量資料存在較小的地方
 
+#數據查詢
+lastweek <- last(etf4_2016, "1 week") - 打印上週的最後2個觀察結果
 
-
-
+last(lastweek, 2) - 提取上週前兩天的所有內容
 
 
 
