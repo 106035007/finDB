@@ -50,7 +50,7 @@ library(readr)
 tw50_2017 = read_csv("2017Q4_code.csv", locale = locale(encoding= 'big5'))
 head(tw50_2017)
 tw50_2017_tej = read_csv("tw50.csv",locale = locale(encoding= 'big5'))
-tw50.csv = na.omit(tw50.csv)
+tw50_2017_tej = na.omit(tw50_2017_tej)
 
 #install.packages("quantmod")
 library(quantmod)
@@ -65,6 +65,7 @@ data=new.env()
 getSymbols(code50.tw, from= '2016-01-01', env= data, auto.assign = T)
 names(data)
 data$'1101.TW'
+data = na.omit(data)
 
 
 
