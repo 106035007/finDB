@@ -260,8 +260,9 @@ head(etf4.csv)</code></pre>
 ##  $ 日期            : Factor w/ 2474 levels &quot;20090105&quot;,&quot;20090106&quot;,..: 1 1 2 2 3 3 4 4 5 5 ...
 ##  $ 未調整收盤價.元.: num  34.2 13.9 34.2 14 34.6 ...
 ##  $ 當日均價.元.    : num  34.3 14 34.2 14 34.6 ...</code></pre>
-<pre class="r"><code>library(readr)
-etf4_csv&lt;-read_csv(&quot;ETF4_2000_2018_d.csv&quot;)</code></pre>
+<pre class="r"><code>library(readr)</code></pre>
+<pre><code>## Warning: package 'readr' was built under R version 3.5.3</code></pre>
+<pre class="r"><code>etf4_csv&lt;-read_csv(&quot;ETF4_2000_2018_d.csv&quot;)</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
 ##   `&lt;c3&gt;&lt;U+04A8&gt;&lt;e9&gt;&lt;U+00A5&gt;N&lt;U+00BD&gt;X` = col_character(),
@@ -323,8 +324,9 @@ etf4_csv&lt;-read_csv(&quot;ETF4_2000_2018_d.csv&quot;)</code></pre>
 <p>locale 是區域設定</p>
 <p>encoding(編碼)</p>
 <p>etf4_csv&lt;-read_csv(“ETF4_2000_2018_d.csv”, locale = locale(encoding=‘big5’)) (會有tibble)</p>
-<pre class="r"><code>library(readxl)
-etf4_xls&lt;-read_excel(&quot;ETF4_2000_2018_d.xls&quot;, 
+<pre class="r"><code>library(readxl)</code></pre>
+<pre><code>## Warning: package 'readxl' was built under R version 3.5.3</code></pre>
+<pre class="r"><code>etf4_xls&lt;-read_excel(&quot;ETF4_2000_2018_d.xls&quot;, 
                      col_types =c(&quot;text&quot;, &quot;text&quot;,&quot;text&quot;, &quot;numeric&quot;,&quot;numeric&quot;))
 head(etf4_xls)</code></pre>
 <pre><code>## # A tibble: 6 x 5
