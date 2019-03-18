@@ -28,6 +28,7 @@ etf4.csv<-read.csv("ETF4_2000_2018_d.csv", fileEncoding='big5',
                    colClasses=c('factor', 'factor', 'factor', 'numeric', 'numeric'))
 head(etf4.csv)
 str(etf4.csv)
+
 # using read_csv to imoprt data to tibble format
 install.packages("readr")
 library(readr)
@@ -42,6 +43,28 @@ library(readxl)
 etf4_xls<-read_excel("ETF4_2000_2018_d.xls", 
                      col_types =c("text", "text","text", "numeric","numeric"))
 head(etf4_xls)
+
+
+#install.packages("readr")
+library(readr)
+tw50_2017 = read_csv("2017Q4_code.csv", locale = locale(encoding= 'big5'))
+head(tw50_2017)
+
+#install.packages("quantmod")
+library(quantmod)
+tickers = c("1101.TW","1102.TW","1216.TW","1301.TW","1303.TW","1326.TW","1402.TW","2002.TW","2105.TW","2207.TW","2633.TW","2801.TW","2823.TW","2880.TW","2881.TW","2882.TW","2883.TW","2884.TW","2885.TW","2886.TW","2887.TW","2890.TW","2891.TW","2892.TW","5880.TW","2912.TW","9904.TW","6505.TW","2303.TW","2311.TW","2325.TW","2330.TW","2408.TW","2454.TW","2301.TW","2324.TW","2357.TW","2382.TW","2395.TW","4938.TW","2409.TW","3008.TW","3481.TW","2412.TW","3045.TW","4904.TW","2308.TW","2317.TW","2354.TW","2472.TW")
+getSymbols(tickers,from = '2016-01-01',auto.assign = T)
+
+code50 = tw50_2017$code
+code50.tw = paste(code50, ".TW", sep = "")
+
+data=new.env()
+getSymbols(code50.tw, from= '2016-01-01', env= data, auto.assign = T)
+names(data)
+data$'1101.TW'
+
+
+
 #=============================================================================
 # clean data
 etf4.c<-etf4_csv[, c(-2, -4)]
