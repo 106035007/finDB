@@ -16,8 +16,9 @@ head(tw50_2017)
 
 tw50_2017_tej = read_csv("tw50.csv",locale = locale(encoding= 'big5'))
 tw50_2017_tej = na.omit(tw50_2017_tej)
+head(tw50_2017_tej)
 ```
-#台灣50(0050) 107年Q4成分股名單
+#台灣50(0050) 107年Q4成分股名單(TEJ)
 library(readr) 執行才可跑程式
 
 用read_csv將成分股名單及代碼(CSV檔)讀進去
@@ -30,12 +31,18 @@ na.omit中omit代表省略的意思
 
 tw50_2017_tej = na.omit(tw50_2017_tej) - 將當中呈現沒有資料的部分消除
 
-```{r cars}
-library(quantmod)
-tickers = c("1101.TW","1102.TW","1216.TW","1301.TW","1303.TW","1326.TW","1402.TW","2002.TW","2105.TW","2207.TW","2633.TW","2801.TW","2823.TW","2880.TW","2881.TW","2882.TW","2883.TW","2884.TW","2885.TW","2886.TW","2887.TW","2890.TW","2891.TW","2892.TW","5880.TW","2912.TW","9904.TW","6505.TW","2303.TW","2311.TW","2325.TW","2330.TW","2408.TW","2454.TW","2301.TW","2324.TW","2357.TW","2382.TW","2395.TW","4938.TW","2409.TW","3008.TW","3481.TW","2412.TW","3045.TW","4904.TW","2308.TW","2317.TW","2354.TW","2472.TW")
-getSymbols(tickers,from = '2016-01-01',auto.assign = T)
-tw1101 = Ad(`1101.TW`)
-```
+head-表投的意思
+
+
+(2311和2325的股票在TEJ上查無資料)
+
+
+###因為下方的程式不知如何更改成正確的所以以文字檔打在下方
+##library(quantmod)
+##tickers = c("1101.TW","1102.TW","1216.TW","1301.TW","1303.TW","1326.TW","1402.TW","2002.TW","2105.TW","2207.TW","2633.TW","2801.TW","2823.TW","2880.TW","2881.TW","2882.TW","2883.TW","2884.TW","2885.TW","2886.TW","2887.TW","2890.TW","2891.TW","2892.TW","5880.TW","2912.TW","9904.TW","6505.TW","2303.TW","2311.TW","2325.TW","2330.TW","2408.TW","2454.TW","2301.TW","2324.TW","2357.TW","2382.TW","2395.TW","4938.TW","2409.TW","3008.TW","3481.TW","2412.TW","3045.TW","4904.TW","2308.TW","2317.TW","2354.TW","2472.TW")
+##getSymbols(tickers,from = '2016-01-01',auto.assign = T)
+##tw1101 = Ad(`1101.TW`)
+
 #讀取股票的資料
 library(quantmod) 執行才可跑程式
 
@@ -52,24 +59,24 @@ Ad=Adjust(調整)
 tw1101 = Ad(`1101.TW`) - 讀取1101股票的調整後日收盤價
 
 
-(2311的股票在TEJ上也查無資料)
+(2311和2325的股票在TEJ上查無資料，2311和2325在yahoo fiance上也找不到)
 
-```{r cars}
-code50 = tw50_2017$code
-code50.tw = paste(code50, ".TW", sep = "")
-```
+
+##code50 = tw50_2017$code
+##code50.tw = paste(code50, ".TW", sep = "")
+
 #不用重複打.TW
 $代表固定的意思
 
 code50.tw = paste(code50, ".TW", sep = "") - .TW的部分可以省略不用一直重複打
 
-```{r cars}
-data=new.env()
-getSymbols(code50.tw, from= '2016-01-01', env= data, auto.assign = T)
-names(data)
-data$'1101.TW'
-data = na.omit(data)
-```
+
+##data=new.env()
+##getSymbols(code50.tw, from= '2016-01-01', env= data, auto.assign = T)
+##names(data)
+##data$'1101.TW'
+##data = na.omit(data)
+
 #將資料進行彙整
 data=new.env()
 getSymbols(code50.tw, from= '2016-01-01', env= data, auto.assign = T) - 可以將所有的資料整合在一起
@@ -81,4 +88,4 @@ na.omit代表省略的意思
 data = na.omit(data) - 將當中呈現沒有資料的部分消除
 
 
-(2311的股票在TE也上查無資料)
+(2311和2325的股票在TEJ上查無資料，2311和2325在yahoo fiance上也找不到)
