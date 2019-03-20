@@ -1,0 +1,20 @@
+---
+title: '123'
+author: "許循閒"
+date: "2019年3月20日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r cars}
+library(readr)
+tw50_2017 = read_csv("2017Q4_code.csv", locale = locale(encoding= 'big5'))
+head(tw50_2017)
+
+tw50_2017_tej = read_csv("tw50.csv",locale = locale(encoding= 'big5'))
+tw50_2017_tej = na.omit(tw50_2017_tej)
+head(tw50_2017_tej)
+```
