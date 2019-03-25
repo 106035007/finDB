@@ -20,9 +20,25 @@ plot(etf4_ret.df1$`0050`, etf4_ret.df1$`00646`, pch=20,
      xlab = '0050', ylab = '00646 S&P500')
 ```
 #畫出etf4_returns_xts的圖
+探討兩個數值之間的關係使用plot
+
 xaxt='n'-讓x軸消失
+
 axis 1-控制下方的X軸
-fortify 的意思
+
+format(index(etf4_returns_xts), "%Y/%m") - 以年/閱資料的形式呈現
+
+使用fortify將xts轉換為df，繪製0050和00646的散點圖
+
+pch(plotting character)- 代表點的圖形
+
+col(color)- 代表顏色
+
+pch與col可分別調整資料當中點的形狀和顏色
+
+main - 代表圖最上方的標題
+
+xlab - x軸標題/ylab - y軸標題
 
 ```{r cars}
 library(tidyverse)
@@ -44,15 +60,33 @@ etf4_ret
 etf4_ret.tmp<-data.frame(date = index(etf4_returns_xts), etf4_ret)
 head(etf4_ret.tmp)
 ```
+#運用ggplot繪圖
+安裝並執行tidyverse、ggplot2、lubridate
 
+將xts轉換為ggplot可以使用的數據資料
+
+將xts中的日期拆為年、月和日的資料數列
+
+geom(geometric objects) - 代表幾何的意思
+
+geom_point表示散佈圖
+
+aes(aesthetic mappings)是用來綁定至 X 軸與 Y 軸
+
+size(大小)/alpha(調整大小的數值)
+
+ggplot(data = etf4_ret.df2) +
+  geom_point(mapping = aes(x = etf4_ret.df2$`0050`, y = etf4_ret.df2$`0056`, color = month)) - 點的顏色的轉換
+
+ggplot(data = etf4_ret.df2) +
+  geom_point(mapping = aes(x = etf4_ret.df2$`0050`, y = etf4_ret.df2$`0056`, size = month)) - 點的顏色由大至小
+
+ggplot(data = etf4_ret.df2) +
+  geom_point(mapping = aes(x = etf4_ret.df2$`0050`, y = etf4_ret.df2$`0056`, alpha = month))- 點的顏色由深至淺
+
+將etf4_ret轉換成etf4_ret.tmp的暫存檔
 
 ```{r cars}
-plot(etf4_ret.tmp$X0050, etf4_ret.tmp$X0056)
-
-ggplot(etf4_ret.tmp) +
-  geom_point(mapping = aes(x = etf4_ret.tmp$X0050, y = etf4_ret.tmp$X0056))
-
-
 etf4_ret.df<-fortify(etf4_returns_xts, melt=TRUE)
 head(etf4_ret.df)
 
@@ -61,7 +95,23 @@ p<-ggplot(etf4_ret.df, aes(x = Index, y = Value))+
 p + scale_x_date(date_labels = "%Y/%m")
 p
 ```
+#將數據轉換為長格式並化成圖
+etf4_ret.df<-fortify(etf4_returns_xts, melt=TRUE)將數據轉換為長格式
 
+也可以使用etf4_ret.tmp<-etf4_returns_xts %>%、data.frame(date=index(.)) %>% 、remove_rownames() %>%、gather(asset, return, -date) 將數據轉換為長格式
+
+利用melt將寬資料轉換成長資料的形式
+
+p<-ggplot(etf4_ret.df, aes(x = Index, y = Value))+
+  geom_line(aes(color = Series), size = 1) 將資料存於p當中
+
+geom_line表示線圖
+
+aes(aesthetic mappings)是用來綁定至 X 軸與 Y 軸
+
+scale_x_date - 日期方面的設置函數
+
+scale_x_date(date_labels = "%Y/%m") - 為調整日期顯示的格式
 
 ```{r cars}
 q<-etf4_ret.df %>%
@@ -69,10 +119,25 @@ q<-etf4_ret.df %>%
   geom_histogram(alpha = 0.45, binwidth = .005) +
   ggtitle("Monthly Returns")
 q + facet_wrap(~Series)+ theme_update(plot.title = element_text(hjust = 0.5))
-
 q
 ```
+#繪製成直條圖
+geom_histogram 為直條圖
 
+binwidth(調整寬度參數)
+
+ggtitle(圖表標題)
+
+facet_wrap函數 - 以分類變數輸入facet，方便比較不同分類下的數值趨勢的差異
+
+theme_update函數 - 修改主題的函數，用於增量更新
+
+hjust - 控制橫軸並將值限定在0-1
+
+q<-etf4_ret.df %>%
+  ggplot(aes(x =Value, fill = Series)) +
+  geom_histogram(alpha = 0.45, binwidth = .005) +
+  ggtitle("Monthly Returns") - 將資料存於q當中
 
 ```{r cars}
 etf4_ret.df %>%
@@ -83,7 +148,18 @@ etf4_ret.df %>%
   ylab("distribution") +
   theme_update(plot.title = element_text(hjust = 0.5))
 ```
+#繪製密度圖
+%>%(將多個函數呼叫，串連的流程)
 
+geom_density - 密度曲線圖所使用的圖層函數
+
+ggtitle(圖表標題)
+
+xlab - x軸標題/ylab - y軸標題
+
+theme_update函數 - 修改主題的函數，用於增量更新
+
+hjust - 控制橫軸並將值限定在0-1
 
 ```{r cars}
 etf4_ret.df %>%
@@ -97,7 +173,22 @@ etf4_ret.df %>%
   ylab("distribution") +
   theme_update(plot.title = element_text(hjust = 0.5))
 ```
+#將密度圖和直條圖繪製成同意張圖
+geom_density - 密度曲線圖所使用的圖層函數
 
+geom_histogram 為直條圖
+
+alpha(調整大小的數值)/binwidth(調整寬度參數)
+
+facet_wrap函數 - 以分類變數輸入facet，方便比較不同分類下的數值趨勢的差異
+
+fill - 改變條形圖的填充色
+
+xlab - x軸標題/ylab - y軸標題
+
+hjust - 控制橫軸並將值限定在0-1
+
+theme_update函數 - 修改主題的函數，用於增量更新
 
 ```{r cars}
 library(plotly)
@@ -106,10 +197,13 @@ p1 = plot_ly(etf4_ret.tmp, x= ~date, y= ~X0050, name = "0050", type = "scatter",
   layout(xaxis = list(title = 'year'), yaxis = list(title= 'monthly returns'))
 p1
 ```
+#視覺化圖表
+plotly - 是個交互式視覺化的工具
 
+scatter(分散式)
 
+add_trace - 用在已有的圖形上，添加新的圖形
 
-
-
+layout - 用來設置圖形外觀
 
 
