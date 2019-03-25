@@ -111,8 +111,8 @@ for(i in 1:length(code50.tw)) {
 show_condition <- function(code){
   tryCatch(code, 
            error = function(c){print("error"); return(NULL)},
-           warning = function(c){print(paste("Caught warning message:", symbol))},
-           message = function(c){symbol}
+           warning = function(c){print(paste("Caught warning message:", symboli))},
+           message = function(c){symboli}
            )
 }
 # 將沒有找到的股票error找出，並將結果輸出為NULL
@@ -138,6 +138,11 @@ for (symboli in code50.tw) {
     }
 }
 
+all.data
+dim(a11.data)
+head(a11.data)
+tw50 = Cl(aii.data)
+tw50
 
 #=============================================================================
 # clean data
@@ -290,17 +295,17 @@ etf4_ret
 etf4_ret.tmp<-data.frame(date = index(etf4_returns_xts), etf4_ret)
 head(etf4_ret.tmp)
 # or you can use the following code
-etf4_ret.tmp<-etf4_returns_xts %>% 
-  data.frame(date=index(.)) %>% 
-  remove_rownames() %>% 
-  gather(asset, return, -date) # turn data into long format
-
-head(etf4_ret.tmp)
+# etf4_ret.tmp<-etf4_returns_xts %>% 
+#   data.frame(date=index(.)) %>% 
+#   remove_rownames() %>% 
+#   gather(asset, return, -date) # turn data into long format
+# 
+# head(etf4_ret.tmp)
 #
 plot(etf4_ret.tmp$X0050, etf4_ret.tmp$X0056)
 #
 ggplot(etf4_ret.tmp) +
-  geom_point(mapping = aes(x = etf4_ret.tmp$`0050`, y = etf4_ret.tmp$`0056`))
+  geom_point(mapping = aes(x = etf4_ret.tmp$X0050, y = etf4_ret.tmp$X0056))
 #
 
 etf4_ret.df<-fortify(etf4_returns_xts, melt=TRUE)
@@ -311,6 +316,8 @@ p<-ggplot(etf4_ret.df, aes(x = Index, y = Value))+
 
 p + scale_x_date(date_labels = "%Y/%m")
 
+p
+
 # histogram distribution
 q<-etf4_ret.df %>%
   ggplot(aes(x =Value, fill = Series)) +
@@ -318,6 +325,7 @@ q<-etf4_ret.df %>%
   ggtitle("Monthly Returns")
 q + facet_wrap(~Series)+ theme_update(plot.title = element_text(hjust = 0.5))
 
+q
 
 # line distribution
 etf4_ret.df %>%
@@ -341,8 +349,11 @@ etf4_ret.df %>%
   theme_update(plot.title = element_text(hjust = 0.5))
 
 #---------------------------------------------------------------
-
-
+library(plotly)
+p1 = plot_ly(etf4_ret.tmp, x= ~date, y= ~X0050, name = "0050", type = "scatter",mode = "lines") %>% 
+  add_trace(y=~X0056, name = '0056',mode = 'lines+markers')%>%
+  layout(xaxis = list(title = 'year'), yaxis = list(title= 'monthly returns'))
+p1
 
 
 
