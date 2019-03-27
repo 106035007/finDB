@@ -16,6 +16,7 @@ head(diamonds)
 set.seed(5)
 diamonds.subset <- diamonds[sample(nrow(diamonds), 100), ]
 ```
+
 #ggplot繪圖文法
 安裝 ggplot2 套件
 
@@ -35,6 +36,7 @@ qplot(carat, price, data = diamonds)
 qplot(log(carat), log(price), data = diamonds)
 qplot(carat, x * y * z, data = diamonds)
 ```
+
 #qplot函數的運用
 qplot函數是ggplot中最基本的繪圖函數
 
@@ -56,6 +58,7 @@ qplot(carat, price, data = diamonds.subset, shape = cut)
 qplot(carat, price, data = diamonds, alpha = I(1/10))
 qplot(carat, price, data = diamonds, alpha = I(1/100))
 ```
+
 #圖形樣式
 qplot一些參數可使更改資料點的顏色、大小等樣式
 
@@ -73,6 +76,7 @@ qplot(carat, price, data = diamonds.subset,
 qplot(carat, price, data = diamonds,
       geom = c("point", "smooth"))
 ```
+
 #在圖形上加入Smoother
 point(點呈現資料)/smooth(平滑曲線與標準誤差)
 
@@ -88,6 +92,7 @@ qplot(color, price / carat, data = diamonds, geom = "jitter",
 qplot(color, price / carat, data = diamonds, geom = "jitter",
       alpha = I(1 / 200))
 ```
+
 #箱形圖與Jitter資料點
 boxplot(箱形圖)
 
@@ -105,12 +110,14 @@ boxplot - 資料同時含一個類型的變數及一個或多個連續型變數�
 qplot(color, price / carat, data = diamonds, geom = "jitter",
       alpha = I(1 / 5), shape = cut)
 ```
+
 #以資料點的形狀區分 cut 變數
 
 ```{r}
 qplot(color, price / carat, data = diamonds, geom = "jitter",
       alpha = I(1 / 5), color = color)
 ```
+
 #以資料點的顏色區分 color 變數
 
 ```{r}
@@ -123,18 +130,21 @@ qplot(color, price / carat, data = diamonds, geom = "jitter",
 qplot(color, price / carat, data = diamonds, geom = "boxplot",
       color = color)
 ```
+
 #以箱形圖的外框顏色區分 color 變數
 
 ```{r}
 qplot(color, price / carat, data = diamonds, geom = "boxplot",
       fill = color)
 ```
+
 #以箱形圖的內部顏色區分 color 變數
 
 ```{r}
 qplot(color, price / carat, data = diamonds, geom = "boxplot",
       size = I(2))
 ```
+
 #調整箱形圖的外框粗細
 
 ```{r}
@@ -152,6 +162,7 @@ qplot(carat, data = diamonds, geom = "density",
 qplot(carat, ..density.., data = diamonds,
       geom = c("histogram", "density"))
 ```
+
 #直方圖與密度函數
 histogram(直方圖0
 
@@ -172,6 +183,7 @@ qplot(color, data = diamonds, geom = "bar")
 qplot(color, data = diamonds, geom = "bar", weight = carat) +
   ylab("carat")
 ```
+
 #長條圖
 bar(長條圖)
 
@@ -186,6 +198,7 @@ year <- function(x) as.POSIXlt(x)$year + 1900
 qplot(unemploy / pop, uempmed, data = economics,
       geom = "path", colour = year(date))
 ```
+
 #時間序列與路徑
 line與path可用來繪製時間序列與路徑類型的資料
 
@@ -203,6 +216,7 @@ qplot(carat, data = diamonds, facets = color ~ cut,
 qplot(carat, data = diamonds, facets = color ~ .,
       geom = "histogram", binwidth = 0.1, xlim = c(0, 3))
 ```
+
 #繪圖面(Facet)
 facets(資料區隔方式)
 
@@ -225,6 +239,7 @@ qplot(
 )
 qplot(carat, price, data = diamonds.subset, log = "xy")
 ```
+
 #其他用法
 xlim(設定x軸繪圖範圍)/ylim(設定y軸的繪圖範圍)
 
@@ -234,10 +249,12 @@ main - 指定圖形的標題
 
 xlab(指定X軸名稱)/ylab(指定y軸名稱)
 
+
 ##R ggplot2 教學：圖層式繪圖
 ```{r}
 my.plot <- ggplot(diamonds, aes(carat, price, colour = cut))
 ```
+
 #建立圖形物件
 對應參數用aes函數包裝
 
@@ -272,6 +289,7 @@ my.plot3 <- my.plot3 +
   geom_histogram(binwidth = 0.2, fill = "steelblue")
 my.plot3
 ```
+
 #圖層
 以上的參數都可省略，不指定就會使用內部預設值
 
@@ -295,6 +313,7 @@ geom_histogram繪製直方圖
 
 ... - geom與stat所使用的參數
 
+
 ##ggplot與qplot的寫法比較
 ```{r}
 ggplot(msleep, aes(sleep_rem / sleep_total, awake)) +
@@ -302,8 +321,10 @@ ggplot(msleep, aes(sleep_rem / sleep_total, awake)) +
 
 qplot(sleep_rem / sleep_total, awake, data = msleep)
 ```
+
 #有2種作法分別為
 # 做法一 / # 做法二
+
 
 ##加入平滑曲線
 ```{r}
@@ -316,6 +337,7 @@ qplot(sleep_rem / sleep_total, awake, data = msleep,
 ggplot(msleep, aes(sleep_rem / sleep_total, awake)) +
   geom_point() + geom_smooth()
 ```
+
 #有3種作法分別為
 # 做法一 / # 做法二 / # 做法三
 
@@ -331,6 +353,7 @@ qplot(sleep_rem, sleep_total, data = msleep) + bestfit
 qplot(awake, brainwt, data = msleep, log = "y") + bestfit
 qplot(bodywt, brainwt, data = msleep, log = "xy") + bestfit
 ```
+
 繪圖物件可用summary查看內容
 
 建立一個圖層套用在不同繪圖物件上
@@ -341,6 +364,7 @@ my.plot5
 mtcars.trans <- transform(mtcars, mpg = mpg ^ 2)
 my.plot5 %+% mtcars.trans
 ```
+
 #資料來源
 %+% - 改變ggplot繪圖物件的資料來源可使用(抽換資料來源)  
 
@@ -350,6 +374,7 @@ my.plot5 <- ggplot(mtcars, aes(mpg, wt, colour = cyl)) + geom_point() - 當中�
 aes(x = weight, y = height, color = age)
 aes(weight, height, colour = sqrt(age))
 ```
+
 #美學對應
 aes(x = weight, y = height, color = age) - 將x軸指定為weight、y軸指定為height，顏色(color)指定為age
 
@@ -366,6 +391,7 @@ my.plot7 + geom_point(aes(colour = factor(1)))
 my.plot7 + geom_point(aes(y = disp))
 aes(y = NULL)
 ```
+
 #繪圖與圖層
 預設可在繪圖物件建立時就指定
 
@@ -383,6 +409,7 @@ my.plot8 <- ggplot(mtcars, aes(mpg, wt))
 my.plot8 + geom_point(colour = "blue")
 my.plot8 + geom_point(aes(colour = "blue"))
 ```
+
 #設定與對應
 colour = "blue" - 資料點的顏色指定為藍色
 
@@ -393,43 +420,13 @@ aes函數 - 代表對應關係
 qplot函數中要設定固定參數要額外用I函數(color = I("blue"))
 
 ```{r}
-head(Oxboys)
-my.plot9 <- ggplot(Oxboys, aes(age, height)) +
-  geom_line()
-my.plot9 <- ggplot(Oxboys, aes(age, height, group = Subject)) +
-  geom_line()
-
-my.plot9 + geom_smooth(method="lm", se = F)
-my.plot9 + geom_smooth(aes(group = 1), method="lm", size = 2, se = F)
-
-boysbox <- ggplot(Oxboys, aes(Occasion, height)) + geom_boxplot()
-boysbox + geom_line(aes(group = Subject), color = "blue")
-```
-#群組(Grouping)/基本群組
-以nlme套件中Oxboys資料集繪圖
-
-畫出多條時間序列的線條可加上group並指定為個體的變數
-
-#圖層與群組
-加上一條線性迴歸線可用geom_smooth配合method = "lm"，加上group可對每個各體畫出各自的迴歸線
-
-group設為一個固定的值(取消群組的功能)
-
-
-將height依Occasion畫出箱形圖
-
-Occasion - 離散型變數，不需特別指定group
-
-geom_line依Subject區分資料畫出每個的資料並另外加color參數設定線條顏色
-
-
-```{r}
 my.df <- data.frame(x = 1:3, y = 1:3, z = 1:3)
 qplot(x, y, data = my.df, color = factor(z), size = I(5)) +
   geom_line(size = 3, group = 1)
 qplot(color, data = diamonds, geom = "bar",
       fill = cut)
 ```
+
 #美學對應與幾何圖形
 繪製line或path的線段時，第一條線段會用第一個點的顏色，第二條線段會用第二個點的顏色，依序下去
 
@@ -441,6 +438,7 @@ ggplot(diamonds, aes(carat)) +
 qplot(carat, ..density.., data = diamonds,
       geom="histogram", binwidth = 0.1)
 ```
+
 #統計轉換(Stat)
 stat_bin用於建立直方圖的統計轉換會產生count(每個bin的資料點數)、density(每個bin的資料點數比例)、ncount(將count標準化最大值為1)、ndensity(將density標準化最大值為1)
 
@@ -461,6 +459,7 @@ diamonds.subset <- diamonds[sample(nrow(diamonds), 500), ]
 ggplot(diamonds.subset, aes(clarity, cut)) +
   geom_point(aes(color = color), position="jitter")
 ```
+
 #位置調整(Position)
 主要用於調整圖層中幾何圖形比較細微的位置選項
 
@@ -480,6 +479,7 @@ my.plot + stat_bin(
   geom = "point", position="identity"
 )
 ```
+
 #幾何圖形與統計轉換
 以count統計轉換
 
@@ -487,7 +487,68 @@ my.plot + stat_bin( aes(size = ..density..), binwidth = 0.1, geom = "point", pos
 
 用stat_identity統計轉換會依原始資料的類型直接選擇適合的幾何圖形來呈現
 
-```{r}
+
+
+###以下都跑出錯誤訊息，是不知道如何修改的程式與說明
+##qplot範例
+mtcars$gear <- factor(mtcars$gear,levels=c(3, 4, 5),
+                      labels=c("3gears", "4gears", "5gears"))
+mtcars$am <- factor(mtcars$am,levels=c(0, 1),
+                    labels=c("Automatic", "Manual"))
+mtcars$cyl <- factor(mtcars$cyl,levels=c(4, 6, 8),
+                     labels=c("4cyl", "6cyl", "8cyl"))
+# 產生繪圖用的因子變數
+
+qplot(mpg, data = mtcars, geom = "density",
+      fill = gear, alpha = I(.5),
+      main="Distribution of Gas Milage",
+      xlab="Miles Per Gallon",
+      ylab="Density")
+# 以 gear 分組畫出 mpg 密度函數圖
+
+qplot(hp, mpg, data = mtcars, shape = am, color = am,
+      facets = gear~cyl, size = I(3),
+      xlab = "Horsepower", ylab = "Miles per Gallon")
+# 將資料以 gear 與 cylinder 分組
+# 畫出 mpg 與 hp 的散佈圖
+# 並且以資料點的顏色與形狀標示 am
+
+qplot(gear, mpg, data = mtcars, geom = c("boxplot", "jitter"),
+      fill = gear, main = "Mileage by Gear Number",
+      xlab = "", ylab = "Miles per Gallon")
+# 畫出箱形圖，
+# 並且在上面用 jitter 資料點畫出實際資料的位置
+
+
+##以下是跑得出圖但是不能連上knit的程式與說明
+my.plot9 <- ggplot(Oxboys, aes(age, height)) +
+  geom_line()
+my.plot9 <- ggplot(Oxboys, aes(age, height, group = Subject)) +
+  geom_line()
+
+my.plot9 + geom_smooth(method="lm", se = F)
+my.plot9 + geom_smooth(aes(group = 1), method="lm", size = 2, se = F)
+
+boysbox <- ggplot(Oxboys, aes(Occasion, height)) + geom_boxplot()
+boysbox + geom_line(aes(group = Subject), color = "blue")
+#群組(Grouping)/基本群組
+以nlme套件中Oxboys資料集繪圖
+
+畫出多條時間序列的線條可加上group並指定為個體的變數
+
+#圖層與群組
+加上一條線性迴歸線可用geom_smooth配合method = "lm"，加上group可對每個各體畫出各自的迴歸線
+
+group設為一個固定的值(取消群組的功能)
+
+
+將height依Occasion畫出箱形圖
+
+Occasion - 離散型變數，不需特別指定group
+
+geom_line依Subject區分資料畫出每個的資料並另外加color參數設定線條顏色
+
+
 library(nlme)
 model <- lme(height ~ age, data = Oxboys, random = ~ 1 + age | Subject)
 age_grid <- seq(-1, 1, length = 10)
@@ -501,7 +562,6 @@ my.plot + geom_line(data = preds, colour = "#3366FF", size= 0.4)
 Oxboys$fitted <- predict(model)
 Oxboys$resid <- with(Oxboys, fitted - height)
 my.plot %+% Oxboys + aes(y = resid) + geom_smooth(aes(group=1))
-```
 #不同的資料來源
 執行nlme
 
@@ -512,5 +572,4 @@ my.plot %+% Oxboys + aes(y = resid) + geom_smooth(aes(group=1))
 
 
 畫出模型的殘差值並加入平滑曲線
-
 

@@ -401,4 +401,4 @@ my.plot %+% Oxboys + aes(y = resid) + geom_smooth(aes(group=1))
 
 # *(159-188)*
 
-
+#*395/312-327  *465/381-393
