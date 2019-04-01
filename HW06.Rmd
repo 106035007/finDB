@@ -91,6 +91,7 @@ sma.cross.equity <- sma.cross$equity[dates] / as.double(sma.cross$equity[dates][
 chartSeries(buy.hold.equity, TA = c(addTA(sma.cross.equity, on=1, col='red')), 
             theme ='white', yrange = range(buy.hold.equity, sma.cross.equity) )
 ```
+
 #創一個圖表顯示2000年-2009年的策略性能
 chartSeries()圖表工具，用於創建標準財務圖表，給出類似對象的時間序列
 
@@ -124,6 +125,8 @@ p
 執行ggplot2
 
 用geom設定圖表資訊
+
+fill - 改變條形圖的填充色
 
 ```{r}
 load.packages('quantmod')
@@ -173,3 +176,8 @@ bt.run計算數據$ weight matrix指定的策略的權益曲線
 bt.apply函數將用戶給定的函數應用於數據環境中的每個符號
 
 data1$weight[] <- NA (更新權重matirx)
+
+放入模型(model)進行分析
+
+
+
