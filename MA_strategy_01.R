@@ -85,7 +85,7 @@ p
 load.packages('quantmod')
 tickers <- spl('SPY')
 
-data1 <- new.env() # data is a environment
+data1 <- new.env() # data is a environment.
 
 # bt.prep function merges and aligns all symbols in the data environment
 getSymbols(tickers, src = 'yahoo', from = '2000-01-01', to = '2018-12-31', env = data1, auto.assign = T)

@@ -1,0 +1,175 @@
+---
+title: "HW06"
+author: "許循閒"
+date: "2019年4月1日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+con = gzcon(url('http://www.systematicportfolio.com/sit.gz', 'rb'))
+source(con)
+close(con)
+```
+#連結資料的網址
+
+```{r}
+load.packages('quantmod')
+bt.simple <- function(data, signal)
+{
+  
+  signal <- lag(signal,1)
+  signal <- na.locf(signal, na.rm = FALSE)
+  signal[is.na(signal)] = 0
+  ret <- ROC(Cl(data), type="discrete")
+  ret[1] = 0
+  bt <- list()
+  bt$ret <- ret * signal 
+  bt$equity <- cumprod(1 + bt$ret)
+  return(bt)
+}
+```
+load.packages(載入套件)
+
+資料為時間序列的形式
+
+signal是買賣的指標向量
+
+lag(signal,1) - 延遲一個時間序列資料
+
+計算接近收益的回報
+
+ROC()計算n個週期內序列的(變化率)變化
+
+計算統計數據 bt <- list() - 將結果存成list
+
+```{r}
+data <- getSymbols('SPY', src = 'yahoo', from = '2000-01-01', to = '2018-12-31', auto.assign = F)
+
+signal <- rep(1, nrow(data))
+buy.hold <- bt.simple(data, signal)
+buy.hold$equity<-as.xts(buy.hold$equity)
+head(buy.hold$equity)
+tail(buy.hold$equity)
+buy.hold$ret<-as.xts(buy.hold$ret)
+head(buy.hold$ret)
+
+sma <- SMA(Cl(data), 200)
+head(sma, 201)
+
+signal <- ifelse(Cl(data) > sma, 1, 0) 
+head(signal, 201)
+sma.cross <- bt.simple(data, signal)
+names(sma.cross)
+tail(sma.cross$equity)
+```
+#測試bt.simple函數
+data <- getSymbols('SPY', src = 'yahoo', from = '2000-01-01', to = '2018-12-31', auto.assign = F) - 加載雅虎財經的歷史價格
+
+載入買入並持有的資訊
+
+sma函數 - 表示移動平均線對近期數值可賦予更高的權重
+
+head(sma, 201) 看201筆資料
+
+MA cross - 移動平均線
+
+Cl - 得到的收盤價
+
+signal <- ifelse(Cl(data) > sma, 1, 0)  - 如果價格大於移動意味著"買"
+
+head/tail - 前/後幾筆資料(沒有指定為6筆)
+
+```{r}
+dates <- '2000::2018'
+buy.hold.equity <- buy.hold$equity[dates] / as.double(buy.hold$equity[dates][1])
+sma.cross.equity <- sma.cross$equity[dates] / as.double(sma.cross$equity[dates][1])
+
+chartSeries(buy.hold.equity, TA = c(addTA(sma.cross.equity, on=1, col='red')), 
+            theme ='white', yrange = range(buy.hold.equity, sma.cross.equity) )
+```
+#創一個圖表顯示2000年-2009年的策略性能
+chartSeries()圖表工具，用於創建標準財務圖表，給出類似對象的時間序列
+
+buy.hold.equity - 買進持有的權益
+
+addTA - 設置顏色並把技術指標加入圖表中
+
+yrange - y 的範圍
+
+```{r}
+library(magrittr)
+strategy.sma<-merge(buy.hold.equity, sma.cross.equity) %>% 
+  set_colnames(c("BH", "SMA"))
+head(strategy.sma,30)
+tail(strategy.sma)
+
+library(ggplot2)
+strategy.sma.df<-fortify(strategy.sma, melt=TRUE)
+head(strategy.sma.df)
+
+p<-ggplot(strategy.sma.df, aes(x = Index, y = Value))+
+  geom_line(aes(color = Series), size = 0.5) +
+  scale_x_date(date_labels = "%Y/%m")
+p
+```
+執行magrittr
+
+讀出買進持有的資訊
+
+#用ggplot2繪圖
+執行ggplot2
+
+用geom設定圖表資訊
+
+```{r}
+load.packages('quantmod')
+tickers <- spl('SPY')
+data1 <- new.env()
+
+getSymbols(tickers, src = 'yahoo', from = '2000-01-01', to = '2018-12-31', env = data1, auto.assign = T)
+bt.prep(data1, align='keep.all')
+names(data1)
+head(data1$prices)
+tail(data1$prices)
+```
+#示例代碼使用回測來實現上述策略
+
+load.packages(載入套件)
+
+data1 <- new.env() - 資料在environment中
+
+bt.prep函數 - 合併並對齊數據環境中的所有符號
+
+```{r}
+data1$weight[] <- 1
+buy.hold <- bt.run.share(data1, clean.signal=F, trade.summary = TRUE)
+buy.hold <- bt.run(data1)
+
+prices<-data1$prices
+sma.1 <- bt.apply(data1, function(x) { SMA(Cl(x), 200) } ) 
+head(sma.1, 201)
+data1$weight[] <- NA 
+data1$weight[] <- iif(prices >= sma.1, 1, 0)
+sma.1.cross <- bt.run(data1, trade.summary=T)  
+
+plotbt.custom.report(sma.1.cross, buy.hold)
+
+models<-list("SMA"= sma.1.cross, "BH" = buy.hold)
+strategy.performance.snapshoot(sma.1.cross, T) 
+strategy.performance.snapshoot(buy.hold, T) 
+strategy.performance.snapshoot(models, T)
+
+```
+#代碼策略
+
+bt.run計算數據$ weight matrix指定的策略的權益曲線
+
+數據$Sweight矩陣將權重(信號)保持在開倉/平倉位置
+
+bt.apply函數將用戶給定的函數應用於數據環境中的每個符號
+
+data1$weight[] <- NA (更新權重matirx)
