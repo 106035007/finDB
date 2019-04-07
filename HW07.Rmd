@@ -1,0 +1,33 @@
+---
+title: "HW07"
+author: "許循閒"
+date: "2019年4月7日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+etf4.all<-readRDS("etf4_xts_all")
+head(etf4.all)
+etf4.all.1 = etf4.all[complete.cases(etf4.all),]
+head(etf4.all.1)
+```
+
+用readRDS讀etf4_xts_all資料 
+
+etf4.all.1 = etf4.all[complete.cases(etf4.all),] - etf4.all.1輸出完整的資料
+
+complete.cases的TURE為完整值 
+
+complete.cases函數 - 缺失值函數 
+
+head - 讀取前幾筆資料 
+
+#老師不好意思，關於功課"利用 ETF4_xts_all 分析四檔基金，分別在50, 100天移動平均投資策略下的績效分析圖表。請將RPubs 網址上傳。"的部分，因為做不出來且不知道如何做，所以只有做上半部讀取資料的程式
+
+
+
+
