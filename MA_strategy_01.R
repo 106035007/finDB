@@ -124,22 +124,29 @@ plotbt.strategy.sidebyside(models, return.table=T)
 # Example: using etf4 to compare their performance using 50-day and 200-day moving average investment strategy 
 # https://systematicinvestor.wordpress.com/2014/08/01/adjusted-momentum/
 #*************************************************************************************
-etf4.all<-readRDS("~/git/FinDB_2019/etf4_xts_all")
+etf4.all<-readRDS("D:/FinDB-master/finDB/etf4_xts_all")
 head(etf4.all)
 str(etf4.all)
 etf4.all.1<-etf4.all[complete.cases(etf4.all),]
 head(etf4.all.1)
 tail(etf4.all.1)
 # 0050
+library(xts)
 data1<-new.env()
 data1$prices<-etf4.all.1$`0050`
 prices<-data1$prices
+prices
 
 sma50<-SMA(prices, 50)
 head(sma50, 51)
 # buy and hold for 0050
 bt.prep(data1, align='keep.all')
 names(data1)
+data1$dates
+data1$prices
+data1$prices = prices
+data1$prices
+
 data1$weight
 data1$execution.price = data1$prices = etf4.all.1$`0050`
 data1$weight[] = 1
@@ -150,7 +157,9 @@ prices<-data1$prices
 sma200<-SMA(prices, 200)
 head(sma200, 201)
 data1$weight[] <- iif(prices >= sma200, 1, 0)
-sma200.0050 <- bt.run(data1, trade.summary=T)   
+sma200.0050 <- bt.run(data1, trade.summary=T)
+sma200.0050$trade.summary
+
 # sma 50 for 0050
 sma50<-SMA(prices, 50)
 head(sma50, 51)
