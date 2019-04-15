@@ -1,47 +1,96 @@
-rm(list=ls())
+---
+title: "Midterm exam"
+author: "許循閒"
+date: "2019年4月15日"
+output: html_document
+---
 
-#
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
 ifelse(!require(quantmod), install.packages('quantmod'), library(quantmod))
 tw20_adj_close = read.csv("2018Q4_20.csv")
 head(tw20_adj_close)
+head(tw20_adj_close, 20)
+```
+#第1題：利用 quantmod library下載，並將結果輸出，變數名稱命名為: tw20_adj_close
+讀取csv檔的台灣二十檔大型股票代號及名稱
 
-#
+head(tw20_adj_close, 20)將20個股票顯示出來
+
+
+```{r}
 ifelse(!require(readr), install.packages('readr'), library(readr))
 tw20.txt = read.table("tw20.txt", header=T)
 #tw20.txt<-tw20.txt[-1,]
 head(tw20.txt)
 str(tw20.txt)
-#
+```
+#第2題：利用TEJ資料庫中"特殊轉檔"下載收盤價，並將檔案輸出並儲存為tw20.txt
+將下載下來的資料用read.table讀成txt檔
+
+head(tw20.txt)顯示前幾筆資料
+
+
+```{r}
 ifelse(!require(reshape2), install.packages('reshape2'), library(reshape2))
 colnames(tw20.txt)<-c("id","", "date", "price")
 tw20.xts = dcast(tw20.txt, date~id)
+head(tw20.xts)
 str(tw20.xts)
-#
+```
+#第3題：在Rstudio中將 tw20.txt 讀入，並將其轉換為 xts格式，並命名為tw20.xts
+用dcast將txt檔轉成xts檔(時間序列格式)
+
+head(tw20.xts)顯示前幾筆資料
+
+
+```{r}
 tw20.xts$date<-as.Date(as.character(tw20.xts$date), "%Y%m%d") 
 library(xts)
 tw20.xts.1<-xts(tw20.xts[,-1], order.by = tw20.xts$date)
 saveRDS(tw20.xts.1,"tw20.xts.rds")
+
 library(quantmod)
 tw20.mon.ret <- to.monthly(tw20.xts.1, indexAt = "lastof", OHLC=FALSE)
 head(tw20.mon.ret)
+
 library(PerformanceAnalytics)
 library(magrittr)
 tw20.day.ret <-Return.calculate(tw20.xts.1, method = "log")
 head(tw20.day.ret)
+```
+#第4題：計算每日、月報酬率，並將資料輸出為tw20.day.ret, tw20.mon.ret.
+將tw20轉存成xts的檔案以畫下列的圖
 
-#
+用to.monthly計算月報酬率
+
+Return.calculate計算每日報酬率
+
+
+
+#第6題：若依90天移動平均操作策略，試比較前三檔股票之操作績效
+```{r}
 con = gzcon(url('http://www.systematicportfolio.com/sit.gz', 'rb'))
 source(con)
 close(con)
 load.packages('quantmod')
-
+```
+要放上以上程式的工具才能執行以下程式
+```{r}
 tw20.all<-readRDS("C:/Users/Sarah/Desktop/finDB-master/finDB/tw20.xts.rds")
 head(tw20.all)
 str(tw20.all)
 tw20.all.1<-tw20.all[complete.cases(tw20.all),]
 head(tw20.all.1)
 tail(tw20.all.1)
+```
+用readRDS讀tw20.xts.rds資料
 
+complete.cases的TURE為完整值 
+```{r}
 library(xts)
 data1<-new.env()
 data1$prices<-tw20.all.1$`1101`
@@ -50,7 +99,11 @@ prices
 
 sma90<-SMA(prices, 90)
 head(sma90, 91)
+```
+讀取1101 90天的資料
 
+SMA簡單移動平均法
+```{r}
 bt.prep(data1, align='keep.all')
 names(data1)
 data1$dates
@@ -63,24 +116,41 @@ data1$execution.price = data1$prices = tw20.all.1$`1101`
 data1$weight[] = 1
 buy.hold.1101 <- bt.run.share(data1, clean.signal=F, trade.summary = TRUE)
 buy.hold.1101 <-bt.run(data1)
+```
+bt.prep(data1, align='keep.all') - 加載和清理數據價格/讀取1101的股票資訊
 
+bt.run函數需要prices、weight、execution.price 3個輸入因素
+```{r}
 prices<-data1$prices
 sma90<-SMA(prices, 90)
 head(sma90, 91)
 data1$weight[] <- iif(prices >= sma90, 1, 0)
 sma90.1101 <- bt.run(data1, trade.summary=T)
 sma90.1101$trade.summary
+```
+讀取90天的股票資料
 
+IIf函數 - 只傳回其中一個部分
+```{r}
 data1$weight[] <- iif(prices >= sma90, 1, -1)
 sma90.1101.short <- bt.run(data1, trade.summary=T)
-
+```
+90天的資料權重
+```{r}
 models<-list("SMA90"= sma90.1101, 
              "SMA90_short" = sma90.1101.short, 
              "BH 1101" = buy.hold.1101)
 strategy.performance.snapshoot(models, T)
 strategy.performance.snapshoot(models, control=list(comparison=T), sort.performance=T)
 plotbt.strategy.sidebyside(models, return.table=T)
+```
 
+繪出模型，將清單中的資料讀取繪畫(夏普指數等資訊)
+
+用plot函數劃出策略圖
+
+plotbt.strategy.sidebyside(models, return.table=T) - 將圖形合併方便觀察所有資料
+```{r}
 library(ggplot2)
 all.1101<-merge.xts(sma90.1101$equity, 
                     sma90.1101.short$equity, 
@@ -97,8 +167,16 @@ p = ggplot(all.1101.long, aes(x = Index, y = Value)) +
   xlab("year") + ylab("cumulative returns")+
   ggtitle(title)
 p
+```
 
-#1216
+用ggplot2繪圖
+
+有3個資料sma90、sma90 short、 BH
+#以上為1101股票
+
+
+
+```{r}
 library(xts)
 data1<-new.env()
 data1$prices<-tw20.all.1$`1216`
@@ -107,7 +185,11 @@ prices
 
 sma90<-SMA(prices, 90)
 head(sma90, 91)
+```
+讀取1216 90天的資料
 
+SMA簡單移動平均法
+```{r}
 bt.prep(data1, align='keep.all')
 names(data1)
 data1$dates
@@ -120,24 +202,41 @@ data1$execution.price = data1$prices = tw20.all.1$`1216`
 data1$weight[] = 1
 buy.hold.1216 <- bt.run.share(data1, clean.signal=F, trade.summary = TRUE)
 buy.hold.1216 <-bt.run(data1)
+```
+bt.prep(data1, align='keep.all') - 加載和清理數據價格/讀取1216的股票資訊
 
+bt.run函數需要prices、weight、execution.price 3個輸入因素
+```{r}
 prices<-data1$prices
 sma90<-SMA(prices, 90)
 head(sma90, 91)
 data1$weight[] <- iif(prices >= sma90, 1, 0)
 sma90.1216 <- bt.run(data1, trade.summary=T)
 sma90.1216$trade.summary
+```
+讀取90天的股票資料
 
+IIf函數 - 只傳回其中一個部分
+```{r}
 data1$weight[] <- iif(prices >= sma90, 1, -1)
 sma90.1216.short <- bt.run(data1, trade.summary=T)
-
+```
+90天的資料權重
+```{r}
 models<-list("SMA90"= sma90.1216, 
              "SMA90_short" = sma90.1216.short, 
              "BH 1101" = buy.hold.1216)
 strategy.performance.snapshoot(models, T)
 strategy.performance.snapshoot(models, control=list(comparison=T), sort.performance=T)
 plotbt.strategy.sidebyside(models, return.table=T)
+```
 
+繪出模型，將清單中的資料讀取繪畫(夏普指數等資訊)
+
+用plot函數劃出策略圖
+
+plotbt.strategy.sidebyside(models, return.table=T) - 將圖形合併方便觀察所有資料
+```{r}
 library(ggplot2)
 all.1216<-merge.xts(sma90.1216$equity, 
                     sma90.1216.short$equity, 
@@ -154,9 +253,16 @@ p = ggplot(all.1216.long, aes(x = Index, y = Value)) +
   xlab("year") + ylab("cumulative returns")+
   ggtitle(title)
 p
+```
+
+用ggplot2繪圖
+
+有3個資料sma90、sma90 short、 BH
+#以上為1216的股票
 
 
-#1301
+
+```{r}
 library(xts)
 data1<-new.env()
 data1$prices<-tw20.all.1$`1301`
@@ -165,7 +271,11 @@ prices
 
 sma90<-SMA(prices, 90)
 head(sma90, 91)
+```
+讀取1301 90天的資料
 
+SMA簡單移動平均法
+```{r}
 bt.prep(data1, align='keep.all')
 names(data1)
 data1$dates
@@ -178,24 +288,41 @@ data1$execution.price = data1$prices = tw20.all.1$`1301`
 data1$weight[] = 1
 buy.hold.1301 <- bt.run.share(data1, clean.signal=F, trade.summary = TRUE)
 buy.hold.1301 <-bt.run(data1)
+```
+bt.prep(data1, align='keep.all') - 加載和清理數據價格/讀取1301的股票資訊
 
+bt.run函數需要prices、weight、execution.price 3個輸入因素
+```{r}
 prices<-data1$prices
 sma90<-SMA(prices, 90)
 head(sma90, 91)
 data1$weight[] <- iif(prices >= sma90, 1, 0)
 sma90.1301 <- bt.run(data1, trade.summary=T)
 sma90.1301$trade.summary
+```
+讀取90天的股票資料
 
+IIf函數 - 只傳回其中一個部分
+```{r}
 data1$weight[] <- iif(prices >= sma90, 1, -1)
 sma90.1301.short <- bt.run(data1, trade.summary=T)
-
+```
+90天的資料權重
+```{r}
 models<-list("SMA90"= sma90.1301, 
              "SMA90_short" = sma90.1301.short, 
              "BH 1301" = buy.hold.1301)
 strategy.performance.snapshoot(models, T)
 strategy.performance.snapshoot(models, control=list(comparison=T), sort.performance=T)
 plotbt.strategy.sidebyside(models, return.table=T)
+```
 
+繪出模型，將清單中的資料讀取繪畫(夏普指數等資訊)
+
+用plot函數劃出策略圖
+
+plotbt.strategy.sidebyside(models, return.table=T) - 將圖形合併方便觀察所有資料
+```{r}
 library(ggplot2)
 all.1301<-merge.xts(sma90.1301$equity, 
                     sma90.1301.short$equity, 
@@ -212,3 +339,12 @@ p = ggplot(all.1301.long, aes(x = Index, y = Value)) +
   xlab("year") + ylab("cumulative returns")+
   ggtitle(title)
 p
+```
+
+用ggplot2繪圖
+
+有3個資料sma90、sma90 short、 BH
+#以上為1301的股票
+
+
+
