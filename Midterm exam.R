@@ -27,15 +27,12 @@ tw20.day.ret <-Return.calculate(tw20.xts.1, method = "log")
 head(tw20.day.ret)
 
 #
-saveRDS(tw20.xts, file = "tw20.xts.rds")
-etf4.xts2 <- readRDS("etf4.xts.rds")
-
 con = gzcon(url('http://www.systematicportfolio.com/sit.gz', 'rb'))
 source(con)
 close(con)
 load.packages('quantmod')
 
-tw20.all<-readRDS("D:/FinDB-master/finDB/tw20.xts")
+tw20.all<-read.table("D:/FinDB-master/finDB/tw20.txt")
 head(tw20.all)
 str(tw20.all)
 tw20.all.1<-tw20.all[complete.cases(tw20.all),]
